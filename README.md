@@ -1,7 +1,7 @@
 # ContactsDatabase
 Name: Katta Vinay Chowdary
 
-Email: vkatta@hawl.iit.edu
+Email: vkatta@hawk.iit.edu
 
 Git Repository URL: https://github.com/vkatta316/ContactsDatabase
 
