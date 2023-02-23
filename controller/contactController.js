@@ -1,4 +1,4 @@
-const contactsRepo = require('../src/contactsFileRepository');
+const contactsRepo = require('../src/contactsSQLiteRepository');
 const Contact = require('../src/Contact')
 const {validationResult} = require('express-validator');
 
@@ -6,7 +6,7 @@ const {validationResult} = require('express-validator');
 /* GET home page. */
 exports.contacts_list = function(req, res, next) {
     const data = contactsRepo.findAll();
-    console.log(data);
+    console.log('DB VINAY' +data);
     res.render('contacts', { heading: 'List Of All Contacts', title: 'Contacts Database', contacts:data });
   };
   
@@ -29,11 +29,10 @@ exports.contacts_list = function(req, res, next) {
       let lastName = req.body.lastName.trim();
       let email = req.body.email.trim();
       let notes = req.body.notes.trim();
-      let id = crypto.randomUUID();
       let date = new Date().toLocaleString();
       
       var contactInfo = {
-          id, firstName, lastName, email, notes, date
+          firstName, lastName, email, notes, date
       };
   
       console.log(contactInfo + ' ' +firstName + ' ' +lastName +' ' + email + ' ' + notes); 
@@ -90,11 +89,11 @@ exports.contacts_list = function(req, res, next) {
       let lastName = req.body.lastName.trim();
       let email = req.body.email.trim();
       let notes = req.body.notes.trim();
-      let id = crypto.randomUUID();
+      
       let date = new Date().toLocaleString();
       
       var contactInfo = {
-          id, firstName, lastName, email, notes, date
+          firstName, lastName, email, notes, date
       };
       const updatedContact = new Contact(req.params.uuid  , contactInfo);
       //const updatedContact = {id: req.params.uuid , contactData: contactInfo};

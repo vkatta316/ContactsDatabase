@@ -1,0 +1,92 @@
+const crypto = require('crypto');
+const Contact = require('./Contact')
+const betterSqlite3 = require('better-sqlite3');
+const fs = require('fs');
+const path = require('path');
+const { info } = require('console');
+
+const db = new betterSqlite3(path.join(__dirname , '../data/contacts.sqlite'), {verbose : console.log});
+
+const createStmt = db.prepare("CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT, notes TEXT, date INTEGER)")
+createStmt.run();
+
+/* const loadData = () => {
+    const jsonData = fs.readFileSync(path.join(__dirname , '../data/contacts.json'))
+    const contactsArray = JSON.parse(jsonData);
+    contactsArray.forEach(element => {
+        const aContact = new Contact(element[1].id, element[1].contactData)
+        db.set(aContact.id, aContact)
+    });
+    console.log('KVCå MVC ' + db);
+}; */
+
+/* const saveData = () => {
+    const stringifyData  = JSON.stringify(Array.from(db));
+    fs.writeFileSync(path.join(__dirname , '../data/contacts.json'), stringifyData);
+}; */
+
+const repo= {
+    findAll : () => {
+        const stmt = db.prepare("SELECT * FROM contacts");
+        const rows = stmt.all();
+        let contacts = [];
+        rows.forEach((row) => {
+            let firstName = row.first_name;
+            let lastName = row.last_name;
+            let email = row.email;
+            let notes = row.notes;
+            let date = new Date().toLocaleString();
+            var contactData = {
+                firstName, lastName, email, notes, date
+            };
+            const aContact = new Contact(row.id, contactData);
+            console.log('aContact' + JSON.stringify(aContact));
+            contacts.push(aContact);
+        });
+        return contacts;
+    },
+
+    findById: (uuid) => {
+        const stmt = db.prepare("SELECT * FROM contacts where id = ?");
+        const row = stmt.get(uuid);
+        let firstName = row.first_name;
+        let lastName = row.last_name;
+        let email = row.email;
+        let notes = row.notes;
+        let date = row.date;
+        var contactData = {
+            firstName, lastName, email, notes, date
+        };
+        return new Contact(row.id , contactData)
+    }, 
+    create: (contact) => {
+        /* contact.id = crypto.randomUUID();
+        console.info('CONTACT ' + contact);
+        db.set(contact.id , contact);
+        saveData(); */
+        
+        let contactInfo = JSON.stringify(contact);    
+        const stmt = db.prepare("INSERT INTO contacts (first_name, last_name, email, notes, date) VALUES (? , ?, ? , ?, ?)");
+        const info = stmt.run(contact.contactData.firstName, contact.contactData.lastName, contact.contactData.email, contact.contactData.notes,
+             contact.contactData.date);
+        console.log(`New Contact is Created with id : ${info.lastInsertRowid}`)
+    },
+    deleteById: (uuid) => {
+        /* db.delete(uuid)
+        saveData(); */
+        const stmt = db.prepare("DELETE FROM contacts where id = ?");
+        const info = stmt.run(uuid);
+        console.log(`Rows affected : ${info.changes}`);
+    },
+    update: (contact) => {
+        /* db.set(contact.id, contact)
+        saveData(); */
+        const stmt = db.prepare("UPDATE contacts SET first_name = ?, last_name = ?, email = ?, notes = ? ,date= ? where id = ?");
+        stmt.run(contact.contactData.firstName, contact.contactData.lastName, contact.contactData.email, contact.contactData.notes, contact.contactData.date,
+             contact.id);
+        console.log(`Rows affected On Update : ${info.changes}`)
+    },
+};
+
+
+module.exports = repo;
