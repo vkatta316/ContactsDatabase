@@ -12,7 +12,6 @@ exports.contacts_list = function(req, res, next) {
   
   /* GET Contact page. */
   exports.contacts_create_get = function(req, res, next) {
-    console.log(crypto.randomUUID()); 
     res.render('contacts_add', { heading: 'Create a New Contact' , lastEdited: new Date() });
   };
   
@@ -47,7 +46,6 @@ exports.contacts_list = function(req, res, next) {
   /* GET Single Contact. */
   exports.contacts_details_get = function(req, res, next) {
     const contact = contactsRepo.findById(req.params.uuid);
-    console.log('AAAAAAA' + JSON.stringify(contact));
     if(contact){
       res.render('contact', { title: 'View Contact Details', contact: contact});
     }else{
@@ -97,7 +95,6 @@ exports.contacts_list = function(req, res, next) {
       };
       const updatedContact = new Contact(req.params.uuid  , contactInfo);
       //const updatedContact = {id: req.params.uuid , contactData: contactInfo};
-      console.log("updatedContact " + updatedContact);
       console.log(contactInfo + ' ' +firstName + ' ' +lastName +' ' + email + ' ' + notes); 
       contactsRepo.update(updatedContact)
       res.redirect(`/contacts/${req.params.uuid}`);

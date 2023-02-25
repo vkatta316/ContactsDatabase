@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const crypto = require('crypto');
+
 const contactsController = require('../controller/contactController.js');
-//const contactsRepo = require('../src/contactsRepository');
-//const contactsRepo = require('../src/contactsFileRepository');
 const { body } = require('express-validator');
 
 /* GET home page. */
